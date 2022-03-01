@@ -1,20 +1,73 @@
-import resolve from "rollup-plugin-node-resolve";
-import commonjs from "rollup-plugin-commonjs";
-import typescript from "rollup-plugin-typescript";
-import pkg from "./package.json";
+import glob from 'glob'
+import path from 'path'
+import resolve from 'rollup-plugin-node-resolve'
+import commonjs from 'rollup-plugin-commonjs'
+import typescript from 'rollup-plugin-typescript2'
+import json from 'rollup-plugin-json'
+import getBabelOutputPlugin from 'rollup-plugin-babel'
+import { terser } from 'rollup-plugin-terser'
+import gzipPlugin from 'rollup-plugin-gzip'
+import rimraf from 'rimraf'
+import summary from 'rollup-plugin-summary'
+const rootPath = path.resolve(__dirname, './')
+const pkg = require('./package.json')
 
-export default {
-  input: "src/index.ts", // 打包入口
-  output: {
-    // 打包出口
-    file: pkg.browser, // 最终打包出来的文件路径和文件名，这里是在package.json的browser: 'dist/index.js'字段中配置的
-    format: "umd", // umd是兼容amd/cjs/iife的通用打包格式，适合浏览器
-    name: "file",
-  },
-  plugins: [
-    // 打包插件
-    resolve(), // 查找和打包node_modules中的第三方模块
-    commonjs(), // 将 CommonJS 转换成 ES2015 模块供 Rollup 处理
-    typescript(), // 解析TypeScript
-  ],
-};
+rimraf(path.resolve(rootPath, 'lib/'), (err) => {})
+rimraf(path.resolve(rootPath, 'dist/'), (err) => {})
+
+function createConfig({ output, mulEntry }) {
+  return {
+    input: mulEntry ? glob.sync('src/*/*.ts') : 'src/index.ts',
+    output,
+    plugins: [
+      resolve(),
+      json(),
+      commonjs({
+        transformMixedEsModules: true
+      }),
+      getBabelOutputPlugin({
+        configFile: path.resolve(__dirname, '.babelrc')
+      }),
+      typescript(),
+      terser(),
+      gzipPlugin(),
+      summary()
+    ],
+    external: [] // 不需要打入包内的第三方npm包,例如['lodash']
+  }
+}
+
+function getConfig() {
+  return [
+    createConfig({
+      output: [
+        {
+          file: pkg.main,
+          format: 'cjs',
+          exports: 'named'
+        }
+      ]
+    }),
+    createConfig({
+      output: [
+        {
+          file: pkg.module,
+          format: 'es',
+          exports: 'named'
+        }
+      ]
+    }),
+    createConfig({
+      output: [
+        {
+          dir: 'lib',
+          format: 'esm',
+          exports: 'named'
+        }
+      ],
+      mulEntry: true
+    })
+  ]
+}
+
+export default getConfig()
