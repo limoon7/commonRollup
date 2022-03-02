@@ -20,8 +20,8 @@ function createConfig({ output, mulEntry }) {
     input: mulEntry ? glob.sync('src/*/*.ts') : 'src/index.ts',
     output,
     plugins: [
-      resolve(),
       json(),
+      resolve(),
       commonjs({
         transformMixedEsModules: true
       }),
