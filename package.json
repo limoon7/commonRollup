@@ -1,6 +1,6 @@
 {
   "name": "@lemonono/atools",
-  "version": "1.1.14",
+  "version": "1.1.15",
   "description": "使用rollup进行构建的js库通用配置",
   "main": "dist/index.min.js",
   "module": "dist/index.esm.js",
