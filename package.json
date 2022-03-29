@@ -1,12 +1,13 @@
 {
   "name": "@lemonono/atools",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "使用rollup进行构建的js库通用配置",
   "main": "dist/index.min.js",
   "module": "dist/index.esm.js",
   "types": "lib/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "publish": "standard-version && git push --follow-tags origin master && npm publish",
     "release": "standard-version",
     "copy": "cp package.json README.md dist",
     "build": "rollup -c && npm run copy",
