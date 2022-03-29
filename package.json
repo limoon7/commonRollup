@@ -1,12 +1,13 @@
 {
   "name": "@lemonono/atools",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "使用rollup进行构建的js库通用配置",
   "main": "dist/index.min.js",
   "module": "dist/index.esm.js",
   "types": "lib/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "release": "standard-version",
     "copy": "cp package.json README.md dist",
     "build": "rollup -c && npm run copy",
     "dev": "rollup -wc",
@@ -78,6 +79,7 @@
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.31.2",
     "shelljs": "^0.8.5",
+    "standard-version": "^9.3.2",
     "tslib": "^2.3.1",
     "typescript": "^4.5.4"
   }
